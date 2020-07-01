@@ -81,17 +81,18 @@ func TestReader_Read(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			r := NewReader(tt.fields.Reader, tt.fields.Progress)
+			var tbuf bytes.Buffer
 
-			b, err := ioutil.ReadAll(r)
+			n, err := tbuf.ReadFrom(r)
 			if err != nil {
 				t.Error(err)
 			}
 
-			if string(b) != tt.output {
-				t.Errorf("Read() got = %v, want %v", string(b), tt.output)
+			if tbuf.String() != tt.output {
+				t.Errorf("Read() got = %v, want %v", tbuf.String(), tt.output)
 			}
 
-			got, _ := strconv.ParseInt(buf.String(), 10, 64)
+			got := n
 			if int(got) != tt.want {
 				t.Errorf("Read() got = %v, want %v", got, tt.want)
 			}
