@@ -41,17 +41,35 @@ func (w WriteCloser) Close() error {
 }
 
 type Reader struct {
-	io.Reader
-	Progress ProgressFunc
+	reader io.Reader
+	progress ProgressFunc
 }
 
 func NewReader(reader io.Reader, progress ProgressFunc) *Reader {
-	return &Reader{Reader: reader, Progress: progress}
+	return &Reader{reader: reader, progress: progress}
 }
 
 func (r Reader) Read(p []byte) (int, error) {
-	n, err := r.Reader.Read(p)
-	r.Progress(n)
+	n, err := r.reader.Read(p)
+	r.progress(n)
 	return n, err
 }
 
+type ReadCloser struct {
+	closer io.ReadCloser
+	progress ProgressFunc
+}
+
+func NewReadCloser(closer io.ReadCloser, progress ProgressFunc) *ReadCloser {
+	return &ReadCloser{closer: closer, progress: progress}
+}
+
+func (r ReadCloser) Read(p []byte) (int, error) {
+	n, err := r.closer.Read(p)
+	r.progress(n)
+	return n, err
+}
+
+func (r ReadCloser) Close() error {
+	return r.closer.Close()
+}
