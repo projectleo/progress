@@ -1,4 +1,4 @@
-package progress
+package progress // import go.ajitem.com/progress
 
 import (
 	"io"
@@ -7,7 +7,7 @@ import (
 type ProgressFunc func(n int)
 
 type Writer struct {
-	writer io.Writer
+	writer   io.Writer
 	progress ProgressFunc
 }
 
@@ -22,7 +22,7 @@ func (w Writer) Write(p []byte) (int, error) {
 }
 
 type WriteCloser struct {
-	closer io.WriteCloser
+	closer   io.WriteCloser
 	progress ProgressFunc
 }
 
@@ -41,7 +41,7 @@ func (w WriteCloser) Close() error {
 }
 
 type Reader struct {
-	reader io.Reader
+	reader   io.Reader
 	progress ProgressFunc
 }
 
@@ -56,7 +56,7 @@ func (r Reader) Read(p []byte) (int, error) {
 }
 
 type ReadCloser struct {
-	closer io.ReadCloser
+	closer   io.ReadCloser
 	progress ProgressFunc
 }
 
@@ -72,4 +72,16 @@ func (r ReadCloser) Read(p []byte) (int, error) {
 
 func (r ReadCloser) Close() error {
 	return r.closer.Close()
+}
+
+type discardCloser struct {
+	io.Writer
+}
+
+func (dc *discardCloser) Close() error {
+	return nil
+}
+
+func DiscardCloser(w io.Writer) io.WriteCloser {
+	return &discardCloser{w}
 }
