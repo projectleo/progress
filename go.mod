@@ -1,3 +1,3 @@
-module go.ajitem.com/progress
+module github.com/asahasrabuddhe/progress
 
 go 1.14
